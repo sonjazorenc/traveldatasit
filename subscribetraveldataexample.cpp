@@ -75,6 +75,8 @@ class client_sample {
         app_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
         app_->release_service(SERVICE_ID, INSTANCE_ID);
         app_->stop();
+        std::cout << "Travel data not requested anymore"
+                  << std::endl;
     }
 #endif
 
@@ -85,7 +87,7 @@ class client_sample {
     }
 
     void on_availability(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available) {
-        std::cout << "Service ["
+        std::cout << "Travel data["
                 << std::setw(4) << std::setfill('0') << std::hex << _service << "." << _instance
                 << "] is "
                 << (_is_available ? "available." : "NOT available.")
@@ -93,7 +95,7 @@ class client_sample {
 }
   
     void on_message(const std::shared_ptr<vsomeip::message> &_response) {
-        std::stringstream its_message;
+               std::stringstream its_message;
         its_message << "Received a notification for Event ["
                 << std::setw(4)    << std::setfill('0') << std::hex
                 << _response->get_service() << "."
@@ -112,7 +114,7 @@ class client_sample {
         for (uint32_t i = 0; i < its_payload->get_length(); ++i)
             its_message << std::hex << std::setw(2) << std::setfill('0')
                 << (int) its_payload->get_data()[i] << " ";
-        std::cout << its_message.str() << std::endl;
+             std::cout << its_message.str() << std::endl;
 
         if (_response->get_client() == 0) {
             if ((its_payload->get_length() % 5) == 0) {
