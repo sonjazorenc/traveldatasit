@@ -15,9 +15,9 @@
 
 #include "traveldataids.hpp"
 
-class service_sample {
+class traveldata {
 public:
-    service_sample(bool _use_tcp, uint32_t _cycle) :
+    traveldata(bool _use_tcp, uint32_t _cycle) :
             app_(vsomeip::runtime::get()->create_application()),
             is_registered_(false),
             use_tcp_(_use_tcp),
@@ -25,8 +25,8 @@ public:
             blocked_(false),
             running_(true),
             is_offered_(false),
-            offer_thread_(std::bind(&service_sample::run, this)),
-            notify_thread_(std::bind(&service_sample::notify, this)) {
+            offer_thread_(std::bind(&traveldata::run, this)),
+            notify_thread_(std::bind(&traveldata::notify, this)) {
     }
 
     bool init() {
@@ -39,21 +39,21 @@ public:
 
         
          app_->register_state_handler(
-                std::bind(&service_sample::on_state, this,
+                std::bind(&traveldata::on_state, this,
                         std::placeholders::_1));
 
         app_->register_message_handler(
                 SERVICE_ID,
                 INSTANCE_ID,
                 GET_METHOD_ID,
-                std::bind(&service_sample::on_get, this,
+                std::bind(&traveldata::on_get, this,
                           std::placeholders::_1));
 
         app_->register_message_handler(
                 SERVICE_ID,
                 INSTANCE_ID,
                 SET_METHOD_ID,
-                std::bind(&service_sample::on_set, this,
+                std::bind(&traveldata::on_set, this,
                           std::placeholders::_1));
 
         std::set<vsomeip::eventgroup_t> its_groups;
@@ -213,7 +213,7 @@ private:
 };
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
-    service_sample *its_sample_ptr(nullptr);
+    traveldata *its_sample_ptr(nullptr);
     void handle_signal(int _signal) {
         if (its_sample_ptr != nullptr &&
                 (_signal == SIGINT || _signal == SIGTERM))
@@ -247,7 +247,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    service_sample its_sample(use_tcp, cycle);
+    traveldata its_sample(use_tcp, cycle);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     its_sample_ptr = &its_sample;
     signal(SIGINT, handle_signal);
