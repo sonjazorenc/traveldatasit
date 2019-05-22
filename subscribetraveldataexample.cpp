@@ -68,7 +68,7 @@ class client_sample {
     /*
      * Handle signal to shutdown
      */
-    */
+    
     void stop() {
         app_->clear_all_handler();
         app_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
