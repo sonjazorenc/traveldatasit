@@ -16,15 +16,17 @@
 
 #include "traveldataids.hpp"
 
+//the declaration of the driver class
+
 class driver {
   public:
-    driver(bool _use_tcp) :
+    driver(bool _tcp_is_used) :
             app_(vsomeip::runtime::get()->create_application()), use_tcp_(
-                    _use_tcp) {
+                    _tcp_is_used) {
     }
 
    bool init() {
-        if (!app_->init()) {
+        if (!application_->init()) {
             std::cerr << "Not possible to send travel data because no application initialized currently" << std::endl;
             return false;
         }
@@ -34,34 +36,36 @@ class driver {
                 << "] Asking for the current travel data started"
                 << std::endl;
      
-      app_->register_state_handler(
+      application_->register_state_handler(
                 std::bind(&driver::on_state, this,
                 std::placeholders::_1));
-      app_->register_message_handler(
+      application_->register_message_handler(
                 vsomeip::ANY_SERVICE, INSTANCE_ID, vsomeip::ANY_METHOD,
                 std::bind(&driver::on_message, this,
                         std::placeholders::_1));
 
-      app_->register_availability_handler(SERVICE_ID, INSTANCE_ID,
+      application_->register_availability_handler(SERVICE_ID, INSTANCE_ID,
                 std::bind(&driver::on_availability,
                           this,
                           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
      
    std::set<vsomeip::eventgroup_t> its_groups;
         its_groups.insert(EVENTGROUP_ID);
-        app_->request_event(
+        application_->request_event(
                 SERVICE_ID,
                 INSTANCE_ID,
                 EVENT_ID,
                 its_groups,
                 true);
-        app_->subscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
+        application_->subscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
 
         return true;
     }
 
     void start() {
-        app_->start();
+        application_->start();
+       std::cout << "Subscription by the driver starts."
+            sttd::endl;
     }
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
@@ -70,11 +74,11 @@ class driver {
      */
     
     void stop() {
-        app_->clear_all_handler();
-        app_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
-        app_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
-        app_->release_service(SERVICE_ID, INSTANCE_ID);
-        app_->stop();
+        application_->clear_all_handler();
+        application_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
+        application_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
+        application_->release_service(SERVICE_ID, INSTANCE_ID);
+        application_->stop();
         std::cout << "Travel data not requiered anymore"
                   << std::endl;
     }
@@ -82,7 +86,7 @@ class driver {
 
     void on_state(vsomeip::state_type_e _state) {
         if (_state == vsomeip::state_type_e::ST_REGISTERED) {
-            app_->request_service(SERVICE_ID, INSTANCE_ID);
+            application_->request_service(SERVICE_ID, INSTANCE_ID);
         }
     }
 
