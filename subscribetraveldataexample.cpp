@@ -16,15 +16,17 @@
 
 #include "traveldataids.hpp"
 
-//the declaration of the driver class
+//Definition of the class 
 
 class driver {
   public:
     driver(bool _tcp_is_used) :
-            app_(vsomeip::runtime::get()->create_application()), use_tcp_(
+            application_(vsomeip::runtime::get()->create_application()), use_tcp_(
                     _tcp_is_used) {
     }
-
+//Initialization of the application
+//comparable with the starting engine
+  
    bool init() {
         if (!application_->init()) {
             std::cerr << "Not possible to send travel data because no application initialized currently" << std::endl;
@@ -63,14 +65,12 @@ class driver {
     }
 
     void start() {
-        application_->start();
-       std::cout << "Subscription by the driver starts."
-            sttd::endl;
+        application_>start();
     }
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     /*
-     * Handle signal to shutdown
+     * subscription is finished and shut down
      */
     
     void stop() {
