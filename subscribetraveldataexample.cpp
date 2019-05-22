@@ -29,9 +29,9 @@ class client_sample {
             return false;
         }
      
-      std::cout << "Client settings [protocol="
+      std::cout << "Driver settings [protocol="
                 << (use_tcp_ ? "TCP" : "UDP")
-                << "]"
+                << "] Asking for the current travel data started"
                 << std::endl;
      
       app_->register_state_handler(
