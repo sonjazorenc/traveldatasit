@@ -16,9 +16,9 @@
 
 #include "traveldataids.hpp"
 
-class client_sample {
+class driver {
   public:
-    client_sample(bool _use_tcp) :
+    driver(bool _use_tcp) :
             app_(vsomeip::runtime::get()->create_application()), use_tcp_(
                     _use_tcp) {
     }
@@ -35,15 +35,15 @@ class client_sample {
                 << std::endl;
      
       app_->register_state_handler(
-                std::bind(&client_sample::on_state, this,
+                std::bind(&driver::on_state, this,
                 std::placeholders::_1));
       app_->register_message_handler(
                 vsomeip::ANY_SERVICE, INSTANCE_ID, vsomeip::ANY_METHOD,
-                std::bind(&client_sample::on_message, this,
+                std::bind(&driver::on_message, this,
                         std::placeholders::_1));
 
       app_->register_availability_handler(SERVICE_ID, INSTANCE_ID,
-                std::bind(&client_sample::on_availability,
+                std::bind(&driver::on_availability,
                           this,
                           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
      
@@ -75,7 +75,7 @@ class client_sample {
         app_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
         app_->release_service(SERVICE_ID, INSTANCE_ID);
         app_->stop();
-        std::cout << "Travel data not requested anymore"
+        std::cout << "Travel data not requiered anymore"
                   << std::endl;
     }
 #endif
@@ -153,7 +153,7 @@ private:
 };
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
-    client_sample *its_sample_ptr(nullptr);
+    driver *its_sample_ptr(nullptr);
     void handle_signal(int _signal) {
         if (its_sample_ptr != nullptr &&
                 (_signal == SIGINT || _signal == SIGTERM))
@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
         i++;
     }
 
-    client_sample its_sample(use_tcp);
+    driver its_sample(use_tcp);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     its_sample_ptr = &its_sample;
     signal(SIGINT, handle_signal);
