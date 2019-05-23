@@ -15,21 +15,24 @@
 #include <vsomeip/vsomeip.hpp>
 
 #include "traveldataids.hpp"
+//my
+
 
 //Definition of the class 
 
 class driver {
   public:
     driver(bool _tcp_is_used) :
-            application_(vsomeip::runtime::get()->create_application()), use_tcp_(
+            ride_(vsomeip::runtime::get()->create_application()), use_tcp_(
                     _tcp_is_used) {
     }
 //Initialization of the application
 //comparable with the starting engine
   
    bool init() {
-        if (!application_->init()) {
-            std::cerr << "Not possible to send travel data because no application initialized currently" << std::endl;
+        if (!ride_->init()) {
+            std::cerr << "Not possible to send travel data because nhas not started yet" 
+                      << std::endl;
             return false;
         }
      
@@ -38,34 +41,34 @@ class driver {
                 << "] Asking for the current travel data started"
                 << std::endl;
      
-      application_->register_state_handler(
+      ride_->register_state_handler(
                 std::bind(&driver::on_state, this,
                 std::placeholders::_1));
-      application_->register_message_handler(
+      ride_->register_message_handler(
                 vsomeip::ANY_SERVICE, INSTANCE_ID, vsomeip::ANY_METHOD,
                 std::bind(&driver::on_message, this,
                         std::placeholders::_1));
 
-      application_->register_availability_handler(SERVICE_ID, INSTANCE_ID,
+      ride_->register_availability_handler(SERVICE_ID, INSTANCE_ID,
                 std::bind(&driver::on_availability,
                           this,
                           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
      
    std::set<vsomeip::eventgroup_t> its_groups;
         its_groups.insert(EVENTGROUP_ID);
-        application_->request_event(
+        ride_->request_event(
                 SERVICE_ID,
                 INSTANCE_ID,
                 EVENT_ID,
                 its_groups,
                 true);
-        application_->subscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
+        ride_->subscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
 
         return true;
     }
 
     void start() {
-        application_>start();
+        ride_>start();
     }
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
@@ -74,19 +77,19 @@ class driver {
      */
     
     void stop() {
-        application_->clear_all_handler();
-        application_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
-        application_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
-        application_->release_service(SERVICE_ID, INSTANCE_ID);
-        application_->stop();
-        std::cout << "Travel data not requiered anymore"
+        ride_->clear_all_handler();
+        ride_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
+        ride_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
+        ride_->release_service(SERVICE_ID, INSTANCE_ID);
+        ride_->stop();
+        std::cout << "Travel data not required anymore"
                   << std::endl;
     }
 #endif
 
     void on_state(vsomeip::state_type_e _state) {
         if (_state == vsomeip::state_type_e::ST_REGISTERED) {
-            application_->request_service(SERVICE_ID, INSTANCE_ID);
+            ride_->request_service(SERVICE_ID, INSTANCE_ID);
         }
     }
 
@@ -127,7 +130,7 @@ class driver {
                 its_get->set_service(SERVICE_ID);
                 its_get->set_instance(INSTANCE_ID);
                 its_get->set_method(GET_METHOD_ID);
-                its_get->set_reliable(use_tcp_);
+                its_get->set_reliable(_tcp_is_used);
                 app_->send(its_get, true);
             }
 
@@ -137,7 +140,7 @@ class driver {
                 its_set->set_service(SERVICE_ID);
                 its_set->set_instance(INSTANCE_ID);
                 its_set->set_method(SET_METHOD_ID);
-                its_set->set_reliable(use_tcp_);
+                its_set->set_reliable(_tcp_is_used);
 
                 const vsomeip::byte_t its_data[]
                     = { 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
@@ -146,14 +149,14 @@ class driver {
                     = vsomeip::runtime::get()->create_payload();
                 its_set_payload->set_data(its_data, sizeof(its_data));
                 its_set->set_payload(its_set_payload);
-                app_->send(its_set, true);
+                ride_->send(its_set, true);
             }
         }
     }
 
 private:
-    std::shared_ptr< vsomeip::application > app_;
-    bool use_tcp_;
+    std::shared_ptr< vsomeip::application > ride_;
+    bool _tcp_is_used;
 };
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
@@ -166,7 +169,7 @@ private:
 #endif
 
 int main(int argc, char **argv) {
-    bool use_tcp = false;
+    bool _tcp_is_used = false;
 
     std::string tcp_enable("--tcp");
     std::string udp_enable("--udp");
@@ -174,14 +177,14 @@ int main(int argc, char **argv) {
     int i = 1;
     while (i < argc) {
         if (tcp_enable == argv[i]) {
-            use_tcp = true;
+            _tcp_is_used = true;
         } else if (udp_enable == argv[i]) {
-            use_tcp = false;
+            _tcp_is_used = false;
         }
         i++;
     }
 
-    driver its_sample(use_tcp);
+    driver its_sample(_tcp_is_used);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     its_sample_ptr = &its_sample;
     signal(SIGINT, handle_signal);
