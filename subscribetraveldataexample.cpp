@@ -31,13 +31,13 @@ class driver {
   
    bool init() {
         if (!ride_->init()) {
-            std::cerr << "Not possible to send travel data because nhas not started yet" 
+            std::cerr << "Not possible to send travel data because engine has not started yet" 
                       << std::endl;
             return false;
         }
      
       std::cout << "Driver settings [protocol="
-                << (use_tcp_ ? "TCP" : "UDP")
+                << (_tcp_is_used ? "TCP" : "UDP")
                 << "] Asking for the current travel data started"
                 << std::endl;
      
