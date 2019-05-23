@@ -81,7 +81,7 @@ public:
                   << "/n"
                   << "Gas-Mileage is " << GAS_MILEAGE
                   << "Gear is" << GEAR
-                  << "Engine revolutions are" << ENGINE_REVOLUTIONS
+                  << "Motor revolutions are" << MOTOR_REVOLUTIONS
                   << "Goodbye"
                   << std::endl;
         ride_->start();
@@ -93,11 +93,11 @@ public:
      * Handle signal to shutdown
      */
     void stop() {
-        std::cout << "Engine is cooling down."
+         std::cout << "Engine is cooling down."
                   << "/n"
                   << "Gas-Mileage is" << GAS_MILEAGE
                   << "Gear is" << GEAR
-                  << "Engine revolutions are" << ENGINE_REVOLUTIONS
+                  << "Motor revolutions are" << MOTOR_REVOLUTIONS
                   << "Goodbye"
                   << std::endl;
         running_ = false;
