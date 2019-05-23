@@ -76,8 +76,13 @@ public:
     }
 
     void start() {
-        std::cout<< "Speed ist ", 
-        
+        std::cout << "Hello, nice to see you. Engine is cooling up."
+                  << "/n"
+                  << "Gas-Mileage is " << GAS_MILEAGE
+                  << "Gear is" << GEAR
+                  << "Engine revolutions are" << ENGINE_REVOLUTIONS
+                  << "Goodbye"
+                  << std::endl;
         app_->start();
     }
 
@@ -89,7 +94,7 @@ public:
     void stop() {
         std::cout << "Engine is cooling down."
                   << "/n"
-                  << "Gas-Mileage is is" << GAS_MILEAGE
+                  << "Gas-Mileage is" << GAS_MILEAGE
                   << "Gear is" << GEAR
                   << "Engine revolutions are" << ENGINE_REVOLUTIONS
                   << "Goodbye"
