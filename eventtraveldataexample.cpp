@@ -36,24 +36,25 @@ public:
     bool init() {
         std::lock_guard<std::mutex> its_lock(mutex_);
 
-        if (!app_->init()) {
-            std::cerr << "No event-sending possible because no apüplication already initialized" << std::endl;
+        if (!ride_->init()) {
+            std::cerr << "Engine is not started yet." 
+                      << std::endl;
             return false;
 }
 
         
-         app_->register_state_handler(
+         ride_->register_state_handler(
                 std::bind(&traveldata::on_state, this,
                         std::placeholders::_1));
 
-        app_->register_message_handler(
+        ride_->register_message_handler(
                 SERVICE_ID,
                 INSTANCE_ID,
                 GET_METHOD_ID,
                 std::bind(&traveldata::on_get, this,
                           std::placeholders::_1));
 
-        app_->register_message_handler(
+        ride_->register_message_handler(
                 SERVICE_ID,
                 INSTANCE_ID,
                 SET_METHOD_ID,
@@ -62,7 +63,7 @@ public:
 
         std::set<vsomeip::eventgroup_t> its_groups;
         its_groups.insert(EVENTGROUP_ID);
-        app_->offer_event(
+        ride_->offer_event(
                 SERVICE_ID,
                 INSTANCE_ID,
                 EVENT_ID,
@@ -83,7 +84,7 @@ public:
                   << "Engine revolutions are" << ENGINE_REVOLUTIONS
                   << "Goodbye"
                   << std::endl;
-        app_->start();
+        ride_->start();
     }
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
@@ -103,28 +104,28 @@ public:
         blocked_ = true;
         condition_.notify_one();
         notify_condition_.notify_one();
-        app_->clear_all_handler();
+        ride_->clear_all_handler();
         stop_offer();
         offer_thread_.join();
         notify_thread_.join();
-        app_->stop();
+        ride_->stop();
     }
 #endif
 
     void offer() {
         std::lock_guard<std::mutex> its_lock(notify_mutex_);
-        app_->offer_service(SERVICE_ID, INSTANCE_ID);
+        ride_->offer_service(SERVICE_ID, INSTANCE_ID);
         is_offered_ = true;
         notify_condition_.notify_one();
     }
 
     void stop_offer() {
-        app_->stop_offer_service(SERVICE_ID, INSTANCE_ID);
+        ride_->stop_offer_service(SERVICE_ID, INSTANCE_ID);
         is_offered_ = false;
     }
 
     void on_state(vsomeip::state_type_e _state) {
-        std::cout << "Application " << app_->get_name() << " is "
+        std::cout << "Application " << ride_->get_name() << " is "
         << (_state == vsomeip::state_type_e::ST_REGISTERED ?
                 "registered." : "deregistered.") << std::endl;
 
@@ -141,7 +142,7 @@ public:
         std::shared_ptr<vsomeip::message> its_response
             = vsomeip::runtime::get()->create_response(_message);
         its_response->set_payload(payload_);
-        app_->send(its_response, true);
+        ride_->send(its_response, true);
     }
 
     void on_set(const std::shared_ptr<vsomeip::message> &_message) {
@@ -150,8 +151,8 @@ public:
         std::shared_ptr<vsomeip::message> its_response
             = vsomeip::runtime::get()->create_response(_message);
         its_response->set_payload(payload_);
-        app_->send(its_response, true);
-        app_->notify(SERVICE_ID, INSTANCE_ID,
+        ride_->send(its_response, true);
+        ride_->notify(SERVICE_ID, INSTANCE_ID,
                      EVENT_ID, payload_);
     }
 
