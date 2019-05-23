@@ -14,6 +14,10 @@
 #include <vsomeip/vsomeip.hpp>
 
 #include "traveldataids.hpp"
+//my
+float SPEED,GAS_MILEAGE,MOTOR_REVOLUTIONS = 0.0;
+int GEAR = 0;
+//finished
 
 class traveldata {
 public:
@@ -72,6 +76,8 @@ public:
     }
 
     void start() {
+        std::cout<< "Speed ist ", 
+        
         app_->start();
     }
 
