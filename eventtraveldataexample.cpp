@@ -87,6 +87,13 @@ public:
      * Handle signal to shutdown
      */
     void stop() {
+        std::cout << "Engine is cooling down."
+                  << "/n"
+                  << "Gas-Mileage is is" << GAS_MILEAGE
+                  << "Gear is" << GEAR
+                  << "Engine revolutions are" << ENGINE_REVOLUTIONS
+                  << "Goodbye"
+                  << std::endl;
         running_ = false;
         blocked_ = true;
         condition_.notify_one();
