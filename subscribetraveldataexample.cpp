@@ -172,7 +172,7 @@ if the engine has already started the driver setting procol appears on the conso
 
 private:
     std::shared_ptr< vsomeip::application > ride_;
-    bool _tcp_is_used;
+    bool _using_tcp;
 };
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
@@ -185,7 +185,7 @@ private:
 #endif
 
 int main(int argc, char **argv) {
-    bool _tcp_is_used = false;
+    bool _using_tcp = false;
 
     std::string tcp_enable("--tcp");
     std::string udp_enable("--udp");
@@ -193,14 +193,14 @@ int main(int argc, char **argv) {
     int i = 1;
     while (i < argc) {
         if (tcp_enable == argv[i]) {
-            _tcp_is_used = true;
+            _using_tcp = true;
         } else if (udp_enable == argv[i]) {
-            _tcp_is_used = false;
+            _using_tcp = false;
         }
         i++;
     }
 
-    driver its_sample(_tcp_is_used);
+    driver its_sample(_using_tcp);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     its_sample_ptr = &its_sample;
     signal(SIGINT, handle_signal);
