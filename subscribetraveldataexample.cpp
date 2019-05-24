@@ -15,19 +15,26 @@
 #include <vsomeip/vsomeip.hpp>
 
 #include "traveldataids.hpp"
-//my
 
 
-//Definition of the class 
+// Creation of a new application.
+// : a new ride is strated
 
 class driver {
   public:
     driver(bool _tcp_is_used) :
-            ride_(vsomeip::runtime::get()->create_application()), use_tcp_(
-                    _tcp_is_used) {
+            ride_(vsomeip::runtime::get()->create_application()), 
+                 use_tcp_(_tcp_is_used) {
     }
-//Initialization of the application
-//comparable with the starting engine
+  
+/*
+proofing if the initialization of the application has still taken place
+if the engine has already started the driver setting procol appears on the console
+*/
+
+  // : Question : is the engine started yet
+  //if not: false
+  //if yes: further operations and true
   
    bool init() {
         if (!ride_->init()) {
@@ -67,16 +74,23 @@ class driver {
         return true;
     }
 
-    void start() {
-        ride_>start();
+  
+  //final start of the application
+  //: engine is finally started
+  
+    int start() {
+        ride_->start();
+        std::cout << "Car ready"
+                  << std::endl;
     }
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     /*
-     * subscription is finished and shut down
+     * application is stopped
+     * engine is cooled down
      */
     
-    void stop() {
+    int stop() {
         ride_->clear_all_handler();
         ride_->unsubscribe(SERVICE_ID, INSTANCE_ID, EVENTGROUP_ID);
         ride_->release_event(SERVICE_ID, INSTANCE_ID, EVENT_ID);
@@ -84,6 +98,7 @@ class driver {
         ride_->stop();
         std::cout << "Travel data not required anymore"
                   << std::endl;
+        return 0;
     }
 #endif
 
