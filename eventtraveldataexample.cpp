@@ -21,10 +21,10 @@ int GEAR = 0;
 
 class traveldata {
 public:
-    traveldata(bool _use_tcp, uint32_t _cycle) :
-            app_(vsomeip::runtime::get()->create_application()),
+    traveldata(bool _tcp_is_used, uint32_t _cycle) :
+            ride_(vsomeip::runtime::get()->create_application()),
             is_registered_(false),
-            use_tcp_(_use_tcp),
+            use_tcp_(_tcp_is_used),
             cycle_(_cycle),
             blocked_(false),
             running_(true),
@@ -40,10 +40,10 @@ public:
             std::cerr << "Engine is not started yet." 
                       << std::endl;
             return false;
-}
+    }
 
         
-         ride_->register_state_handler(
+        ride_->register_state_handler(
                 std::bind(&traveldata::on_state, this,
                         std::placeholders::_1));
 
@@ -69,7 +69,10 @@ public:
                 EVENT_ID,
                 its_groups,
                 true);
-        payload_ = vsomeip::runtime::get()->create_payload();
+        payload_ = "Speed is " + SPEED + "/n" + 
+                   "Gas mileage is " + GAS_MILEAGE + "/n" + 
+                   "Motor revolutions are " + MOTOR_REVOLUTIONS + "/n" +
+                   "Gear is " + GEAR + std::endl;
 
         blocked_ = true;
         condition_.notify_one();
