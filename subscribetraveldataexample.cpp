@@ -108,12 +108,13 @@ if the engine has already started the driver setting procol appears on the conso
         }
     }
 
-    void on_availability(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available) {
+    int on_availability(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available) {
         std::cout << "Travel data["
                 << std::setw(4) << std::setfill('0') << std::hex << _service << "." << _instance
                 << "] is "
                 << (_is_available ? "available." : "NOT available.")
                 << std::endl;
+        return 0;
 }
   
     void on_message(const std::shared_ptr<vsomeip::message> &_response) {
