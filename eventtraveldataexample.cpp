@@ -33,6 +33,11 @@ public:
             notify_thread_(std::bind(&traveldata::notify, this)) {
     }
 
+    /*
+    *initialization of the car
+    *a new event is made
+    *travel data appearing on the console
+    */
     bool init() {
         std::lock_guard<std::mutex> its_lock(mutex_);
 
@@ -69,18 +74,19 @@ public:
                 EVENT_ID,
                 its_groups,
                 true);
-        payload_ = "Speed is " + SPEED + "/n" + 
+        current_travel_data_ = "Speed is " + SPEED + "/n" + 
                    "Gas mileage is " + GAS_MILEAGE + "/n" + 
                    "Motor revolutions are " + MOTOR_REVOLUTIONS + "/n" +
                    "Gear is " + GEAR + std::endl;
-
+        std::cout << current_travel_data
+                  << std::endl;
         blocked_ = true;
         condition_.notify_one();
         return true;
     }
 
     void start() {
-        std::cout << "Hello, nice to see you. Engine is cooling up."
+        std::cout << "Hello, nice to see you. Engine is starting."
                   << "/n"
                   << "Gas-Mileage is " << GAS_MILEAGE
                   << "Gear is" << GEAR
@@ -92,8 +98,9 @@ public:
 
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
         
- /*
-     * Handle signal to shutdown
+    /*
+     * No event is sent anymore
+     * Engine is cooling down
      */
     void stop() {
          std::cout << "Engine is cooling down."
