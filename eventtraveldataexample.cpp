@@ -38,6 +38,7 @@ public:
     *a new event is made
     *travel data appearing on the console
     */
+    
     bool init() {
         std::lock_guard<std::mutex> its_lock(mutex_);
 
@@ -103,7 +104,7 @@ public:
      * Engine is cooling down
      */
     void stop() {
-         std::cout << "Engine is cooling down."
+        std::cout << "Engine is cooling down."
                   << "/n"
                   << "Gas-Mileage is" << GAS_MILEAGE
                   << "Gear is" << GEAR
@@ -122,6 +123,11 @@ public:
     }
 #endif
 
+    /*
+    *sending an event is offered
+    *travel data is offered by the car
+    */
+    
     void offer() {
         std::lock_guard<std::mutex> its_lock(notify_mutex_);
         ride_->offer_service(SERVICE_ID, INSTANCE_ID);
