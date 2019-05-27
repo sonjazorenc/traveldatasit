@@ -18,7 +18,7 @@
 
 
 // Creation of a new application.
-// : a new ride is strated
+// : a new ride is started
 
 class driver {
   public:
@@ -51,6 +51,7 @@ if the engine has already started the driver setting procol appears on the conso
       ride_->register_state_handler(
                 std::bind(&driver::on_state, this,
                 std::placeholders::_1));
+     
       ride_->register_message_handler(
                 vsomeip::ANY_SERVICE, INSTANCE_ID, vsomeip::ANY_METHOD,
                 std::bind(&driver::on_message, this,
@@ -80,7 +81,7 @@ if the engine has already started the driver setting procol appears on the conso
   
     int start() {
         ride_->start();
-        std::cout << "Car ready"
+        std::cout << "Car is ready"
                   << std::endl;
     }
 
@@ -182,15 +183,14 @@ int main(int argc, char **argv) {
     std::string tcp_enable("--tcp");
     std::string udp_enable("--udp");
 
-    int i = 1;
-    while (i < argc) {
-        if (tcp_enable == argv[i]) {
+   for(c = 1; c < argc; c++){ 
+ 
+        if (tcp_enable == argv[c]) {
             _using_tcp = true;
-        } else if (udp_enable == argv[i]) {
+        } else if (udp_enable == argv[c]) {
             _using_tcp = false;
         }
-        i++;
-    }
+   }
 
     driver its_sample(_using_tcp);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
