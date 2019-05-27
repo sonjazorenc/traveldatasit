@@ -256,7 +256,7 @@ private:
     }
 #endif
 
-int main(int argc, char **argv) {
+int main(int argc, char **pointerofpointer) {
     bool use_tcp = false;
     uint32_t cycle = 1000; // default 1s
 
@@ -264,25 +264,25 @@ int main(int argc, char **argv) {
     std::string udp_enable("--udp");
     std::string cycle_arg("--cycle");
 
-    for (int i = 1; i < argc; i++) {
-        if (tcp_enable == argv[i]) {
+    for (int x = 1; x < argc; x++) {
+        if (tcp_enable == pointerofpointer[x]) {
             use_tcp = true;
             break;
         }
-        if (udp_enable == argv[i]) {
+        if (udp_enable == pointerofpointer[x]) {
             use_tcp = false;
             break;
         }
 
-        if (cycle_arg == argv[i] && i + 1 < argc) {
-            i++;
+        if (cycle_arg == pointerofpointer[x] && x + 1 < pointerofpointer) {
+            x++;
             std::stringstream converter;
-            converter << argv[i];
+            converter << pointerofpointer[x];
             converter >> cycle;
         }
     }
 
-    traveldata its_sample(use_tcp, cycle);
+    traveldata its_sample(use_tcp_, cycle);
 #ifndef VSOMEIP_ENABLE_SIGNAL_HANDLING
     its_sample_ptr = &its_sample;
     signal(SIGINT, handle_signal);
